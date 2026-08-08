@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ristorante Levante - Menu</title>
+    <!-- Importazione Font Stile Pirata e Leggibile per i testi -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-main: #0c1b23;
+            --bg-gradient: linear-gradient(to bottom, #1a333d, #0c1b23);
+            --accent-blue: #38bdf8;
+            --surface-card: rgba(15, 23, 42, 0.65);
+            --border-card: rgba(56, 189, 248, 0.2);
+            --text-main: #ffffff;
+            --text-muted: #cbd5e1;
+            
+            --font-pirate: 'Pirata One', system-ui, sans-serif;
+            --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-main);
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* EFFETTO ONDA DINAMICA RESPONSIVE */
+        .ocean-floor {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 150px;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .wave-layer {
+            position: absolute;
+            bottom: 0;
+            width: 200%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,32 C150,90 350,10 500,45 C650,80 850,20 1000,55 C1150,90 1300,45 1400,32 L1400,120 L0,120 Z' fill='%230284c7' opacity='0.25'/%3E%3C/svg%3E");
+            background-size: 50% 100%;
+            animation: wave-run 14s linear infinite;
+        }
+        .wave-layer.rear {
+            animation: wave-run 9s linear infinite reverse;
+            opacity: 0.12;
+            height: 115%;
+        }
+        @keyframes wave-run {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* INTERFACCIA E CONTENITORI */
+        .wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px 16px 80px 16px;
+        }
+
+        /* SCHERMATA LINGUA */
+        #language-screen {
+            min-height: calc(100vh - 40px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .welcome-anchor {
+            width: 80px;
+            height: 80px;
+            fill: var(--accent-blue);
+            margin-bottom: 16px;
+            filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.4));
+        }
+        .main-pirate-title {
+            font-family: var(--font-pirate);
+            font-size: 3.5rem;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            color: #ffffff;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.5);
+        }
+        .subtitle-loc {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--accent-blue);
+            margin-bottom: 40px;
+            font-weight: 600;
+        }
+
+        /* PULSANTI LINGUA */
+        .lang-btn {
+            width: 85%;
+            padding: 16px;
+            background: var(--surface-card);
+            border: 1px solid var(--border-card);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            margin-bottom: 18px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .lang-btn:hover, .lang-btn:focus, .lang-btn:active {
+            background: var(--accent-blue);
+            color: #0c1b23;
+            border-color: #67e8f9;
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.6), 0 4px 15px rgba(0, 0, 0, 0.4);
+        }
+        
+        .lang-btn:active {
+            transform: translateY(1px) scale(0.98);
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+        }
+
+        /* SCHERMATA NAVIGAZIONE MENU */
+        #menu-screen {
+            display: none;
+        }
+        header {
+            text-align: center;
+            padding: 20px 0 10px 0;
+            position: relative;
+        }
+        .back-btn {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .back-btn:hover {
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .header-anchor {
+            width: 40px;
+            height: 40px;
+            fill: var(--accent-blue);
+            margin-bottom: 6px;
+        }
+
+        /* GRID DELLE CATEGORIE */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 25px 0;
+        }
+        .category-card {
+            background: var(--surface-card);
+            border: 1px solid var(--border-card);
+            backdrop-filter: blur(10px);
+            padding: 20px 10px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .category-card:hover, .category-card:focus {
+            border-color: #67e8f9;
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.5), 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .category-card.active-cat {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            transform: translateY(0);
+            box-shadow: 0 0 18px rgba(56, 189, 248, 0.4), 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .category-card h3 {
+            font-family: var(--font-pirate);
+            font-size: 1.6rem;
+            letter-spacing: 1px;
+            color: #ffffff;
+            transition: color 0.25s ease;
+        }
+        
+        .category-card.active-cat h3 {
+            color: #0c1b23;
+        }
+
+        /* SEZIONE LISTA PIATTI */
+        .items-container {
+            margin-top: 10px;
+        }
+        .current-category-title {
+            font-family: var(--font-pirate);
+            font-size: 2.2rem;
+            color: var(--accent-blue);
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-card);
+            padding-bottom: 4px;
+            letter-spacing: 1px;
+        }
+        .menu-item {
+            background: var(--surface-card);
+            border: 1px solid var(--border-card);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        /* FOTO RIDIMENSIONATE E INQUADRATE PERFETTAMENTE */
+        .item-img {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            image-rendering: -webkit-optimize-contrast;
+            cursor: zoom-in;
+            transition: transform 0.3s ease, opacity 0.2s ease;
+        }
+        
+        .menu-item:hover .item-img {
+            transform: scale(1.02);
+        }
+        
+        .item-img:active {
+            opacity: 0.85;
+        }
+        
+        .item-body {
+            padding: 14px;
+        }
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 4px;
+        }
+        .item-name {
+            font-size: 1.05rem;
+            font-weight: 600;
+            padding-right: 10px;
+        }
+        .item-price {
+            color: var(--accent-blue);
+            font-weight: 700;
+            font-size: 1.05rem;
+            white-space: nowrap;
+        }
+        .item-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+            margin-bottom: 6px;
+        }
+        .allergen-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            background: rgba(0,0,0,0.25);
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        /* LIGHTBOX ANTEPRIMA FOTO */
+        .image-lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(12, 27, 35, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            cursor: zoom-out;
+            padding: 20px;
+        }
+        
+        .image-lightbox.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .lightbox-content {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+            object-fit: contain;
+        }
+        
+        .image-lightbox.open .lightbox-content {
+            transform: scale(1);
+        }
+
+        /* STRUTTURA LISTA SEMPLICE (BAR & BEVANDE) */
+        .simple-list {
+            background: var(--surface-card);
+            border: 1px solid var(--border-card);
+            border-radius: 12px;
+            padding: 4px 14px;
+            backdrop-filter: blur(10px);
+        }
+        .simple-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .simple-row:last-child { border-bottom: none; }
+        .simple-name { font-size: 0.95rem; font-weight: 500; }
+        .simple-price { color: var(--accent-blue); font-weight: 600; }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px 0;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        footer p { margin-bottom: 4px; }
+    </style>
+</head>
+<body>
+
+    <!-- ONDA DINAMICA -->
+    <div class="ocean-floor">
+        <div class="wave-layer rear"></div>
+        <div class="wave-layer"></div>
+    </div>
+
+    <!-- OVERLAY ANTEPRIMA FOTO -->
+    <div class="image-lightbox" id="lightbox" onclick="closePreview()">
+        <img class="lightbox-content" id="lightbox-img" src="" alt="Anteprima piatto">
+    </div>
+
+    <!-- SVG LOGO ANCORA -->
+    <svg style="display: none;">
+        <g id="icon-anchor">
+            <path d="M32 6.5 C32 4 30 2 27.5 2 C25 2 23 4 23 6.5 C23 9 25 11 27.5 11 C30 11 32 9 32 6.5 Z M27.5 11 L27.5 44 M16 20 L39 20 M7 32 C7 48, 48 48, 48 32 M7 32 L3 32 M48 32 L52 32 M27.5 49 C27.5 52, 27.5 53, 27.5 53" stroke="currentColor" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+    </svg>
+
+    <div class="wrapper">
+        
+        <!-- 1. LANDING DI BENVENUTO E SCELTA LINGUA -->
+        <div id="language-screen">
+            <svg class="welcome-anchor" viewBox="0 0 55 55"><use xlink:href="#icon-anchor"></use></svg>
+            <h1 class="main-pirate-title">Levante</h1>
+            <div class="subtitle-loc">Genova • Santa Margherita Ligure</div>
+            <button class="lang-btn" onclick="initMenu('it')">🇮🇹 Italiano</button>
+            <button class="lang-btn" onclick="initMenu('en')">🇬🇧 English</button>
+        </div>
+
+        <!-- 2. APPLICAZIONE MENU INTERATTIVA -->
+        <div id="menu-screen">
+            <header>
+                <button class="back-btn" onclick="resetToLanguage()">⬅ Lingua</button>
+                <svg class="header-anchor" viewBox="0 0 55 55"><use xlink:href="#icon-anchor"></use></svg>
+                <h2 class="main-pirate-title" style="font-size: 2.6rem;">Levante</h2>
+            </header>
+
+            <!-- Contenitore Griglia delle Categorie -->
+            <div class="categories-grid" id="categories-box">
+                <!-- Generato via JavaScript -->
+            </div>
+
+            <!-- Area Elenco Piatti Categoria Selezionata -->
+            <div class="items-container">
+                <h2 class="current-category-title" id="selected-category-name">-</h2>
+                <div id="category-items-box">
+                    <!-- Generato via JavaScript -->
+                </div>
+            </div>
+
+            <footer id="menu-footer">
+                <!-- Note legali generate dinamicamente -->
+            </footer>
+        </div>
+
+    </div>
+
+    <script>
+        const database = {
+            it: {
+                footer: "<p>Coperto: € 3,00 | *Prodotto surgelato all'origine</p><p>Allergeni da (1) a (14): consultare la tabella informativa</p>",
+                sections: [
+                    { id: "cat-mare-ant", name: "Antipasti Mare", type: "cards", items: [
+                        { name: "Cozze alla marinara", price: "€ 15,00", desc: "", allergens: "5", img: "https://i.postimg.cc/76RwQH4d/PHOTO-2026-07-10-13-41-05-3.jpg" },
+                        { name: "Insalatina di polpo", price: "€ 18,00", desc: "Con vellutata di patate, pomodorini freschi, olive verdi e riduzione d'aceto balsamico IGP", allergens: "5", img: "https://i.postimg.cc/Gt0hmLfK/PHOTO-2026-07-10-13-41-32.jpg" },
+                        { name: "Insalata di mare tiepida", price: "€ 20,00", desc: "Calamari, gamberi, seppia con finocchi e arance", allergens: "2, 5, 9", img: "https://i.postimg.cc/BnvssPvp/PHOTO-2026-07-10-13-42-17.jpg" },
+                        { name: "Gamberoni LEVANTE all'arancia", price: "€ 16,50", desc: "Con salsa all'arancia e granella di mandorle", allergens: "1, 9", img: "https://i.postimg.cc/sXYb53Xc/PHOTO-2026-07-10-13-44-41.jpg" },
+                        { name: "Tartare di tonno e burrata pugliese", price: "€ 22,00", desc: "", allergens: "11, 14", img: "https://i.postimg.cc/3NN8DPRT/Tartare-di-tonno-e-burrata-pugliese.jpg" },
+                        { name: "Zuppetta \"LEVANTE\"", price: "€ 18,00", desc: "Nostrana con tarallo napoletano \"sugna e pepe\"", allergens: "1, 5, 8, 9", img: "https://i.postimg.cc/pLqss4V6/zuppetta-levante.jpg" },
+                        { name: "Crudo \"LEVANTE\"", price: "€ 48,00", desc: "", allergens: "5, 9, 11", img: "https://i.postimg.cc/0jYfDHHj/crudo-levante.jpg" },
+                        { name: "Tartare di salmone e avocado", price: "€ 20,00", desc: "", allergens: "11", img: "https://i.postimg.cc/fy1RLjGw/taratare-avocado.jpg" }
+                    ]},
+                    { id: "cat-terra-ant", name: "Antipasti Terra", type: "cards", items: [
+                        { name: "Mozzarella di bufala campana (250gr)", price: "€ 24,00", desc: "Servita con bruschette ai pomodorini", allergens: "8, 14", img: "https://i.postimg.cc/P5sqnyb4/mozzarella-di-bufala-campana.jpg" },
+                        { name: "Caprese di mozzarella (250gr)", price: "€ 20,00", desc: "", allergens: "14", img: "https://i.postimg.cc/GmK9PYYh/caprese-mozzarella.jpg" },
+                        { name: "Burrata pugliese rucola e pomodorini", price: "€ 15,00", desc: "Servita con rucola e pomodorini", allergens: "14", img: "https://i.postimg.cc/J016CJqV/PHOTO-2026-07-10-14-10-36.jpg" },
+                        { name: "Bruschette ai pomodorini", price: "€ 6,00", desc: "Ai pomodorini ciliegino, basilico fresco e origano", allergens: "8", img: "https://i.postimg.cc/Jz9p4Sqh/PHOTO-2026-07-10-14-11-35.jpg" },
+                        { name: "Bruschetta con burrata e zucchine", price: "€ 7,00", desc: "Con burrata pugliese e cruditè di zucchine", allergens: "8, 14", img: "https://i.postimg.cc/T2Jgjm3W/burrata-e-zucchine.jpg" },
+                        { name: "Bruschetta con burrata e acciughe", price: "€ 8,00", desc: "Con burrata pugliese e acciughe", allergens: "8, 14", img: "https://i.postimg.cc/zvFQ8B5N/burrata-e-acciugh.jpg" },
+                        { name: "Parmigiana di melanzane", price: "€ 14,00", desc: "", allergens: "14", img: "https://i.postimg.cc/v83X64zC/PHOTO-2026-07-10-14-12-12.jpg" }
+                    ]},
+                    { id: "cat-primi-terra", name: "Primi Terra", type: "cards", items: [
+                        { name: "Trofie liguri al pesto", price: "€ 16,00", desc: "Con pesto di basilico genovese DOP", allergens: "8, 14", img: "https://i.postimg.cc/Xvk9SPDX/PHOTO-2026-07-10-14-15-07.jpg" },
+                        { name: "Spaghetti alla carbonara", price: "€ 19,00", desc: "", allergens: "8, 10", img: "https://i.postimg.cc/fyJddRz6/PHOTO-2026-07-10-14-15-23.jpg" },
+                        { name: "Spaghetti alla Nerano", price: "€ 18,00", desc: "Con zucchine fritte e formaggio", allergens: "8, 14", img: "https://i.postimg.cc/tg6VsncX/spaghetti-nerano.jpg" },
+                        { name: "Gnocchi freschi con pomodorino, mozzarella e grana", price: "€ 16,00", desc: "", allergens: "8, 14", img: "https://i.postimg.cc/nz0VrHnx/Gnocchi-freschi-con-pomodorino-mozzarella-e-grana.jpg" },
+                        { name: "Ravioli alla bolognese", price: "€ 18,00", desc: "", allergens: "8", img: "https://i.postimg.cc/CKhzDxmw/PHOTO-2026-07-10-14-16-46.jpg" },
+                        { name: "Spaghetti pomodorino fresco e basilico", price: "€ 16,00", desc: "", allergens: "8", img: "https://i.postimg.cc/zBSbjZ5c/Spaghetti-pomodorini-fresco-e-basilico.jpg" },
+                        { name: "Spaghetti con salsa di pomodoro", price: "€ 17,00", desc: "", allergens: "8", img: "https://i.postimg.cc/9MFVvvyq/Spaghetti-con-salsa-di-pomodoro.jpg" },
+                        { name: "Penne all'arrabiata", price: "€ 16,00", desc: "", allergens: "8", img: "https://i.postimg.cc/G3KTTCXN/Penne-all-arrabiata.jpg" }
+                    ]},
+                    { id: "cat-primi-mare", name: "Primi Mare", type: "cards", items: [
+                        { name: "Paccheri orata, pomodoro giallo e pistacchio", price: "€ 19,00", desc: "Con datterino giallo e granella di pistacchi di Bronte DOP", allergens: "1, 8, 11", img: "https://i.postimg.cc/dt1SV283/PHOTO-2026-07-10-13-49-25.jpg" },
+                        { name: "Risotto gamberi e burrata", price: "€ 19,00", desc: "", allergens: "5, 9", img: "https://i.postimg.cc/GmkcXnH4/PHOTO-2026-07-10-13-50-36.jpg" },
+                        { name: "Spaghetti alle vongole e datteri giallo", price: "€ 20,00", desc: "", allergens: "5, 8", img: "https://i.postimg.cc/gjXpRfCb/PHOTO-2026-07-10-13-51-15.jpg" },
+                        { name: "Spaghetti alla carbonara di mare", price: "€ 21,00", desc: "E guanciale croccante", allergens: "5, 8, 10, 11", img: "https://i.postimg.cc/pT7b2spf/PHOTO-2026-07-10-13-58-42.jpg" },
+                        { name: "Spaghetti cozze, vongole e pomodorini", price: "€ 19,00", desc: "", allergens: "5, 8", img: "https://i.postimg.cc/YSCC0yCt/PHOTO-2026-07-10-14-01-19.jpg" },
+                        { name: "Paccheri con astice", price: "€ 28,00", desc: "E pomodorino fresco", allergens: "8, 9", img: "https://i.postimg.cc/430sdf0d/PHOTO-2026-07-10-14-01-44.jpg" },
+                        { name: "Paccheri pesce spada, melanzane e pecorino", price: "€ 21,00", desc: "Con datterino giallo", allergens: "8, 11, 14", img: "https://i.postimg.cc/WpGcRwsf/PHOTO-2026-07-10-14-04-09.jpg" },
+                        { name: "Pasta mista con cozze fagioli e pomodorino", price: "€ 18,50", desc: "", allergens: "5, 8", img: "https://i.postimg.cc/MGwzYcT0/Pasta-mista-con-cozze-fagioli-e-pomodorino.jpg" }
+                    ]},
+                    { id: "cat-secondi", name: "Secondi Piatti", type: "cards", items: [
+                        { name: "Millefoglie di pollo e glassa", price: "€ 17,00", desc: "Con verdure grigliate e glassa di aceto balsamico IGP", allergens: "14", img: "https://i.postimg.cc/SNK2Wv5j/millefoglio-pollo.jpg" },
+                        { name: "Tagliata di carne di manzo rucola e grana", price: "€ 24,00", desc: "", allergens: "14", img: "https://i.postimg.cc/26z8CqRG/Tagliata-di-carne-di-manzo-rucola-e-grana.jpg" },
+                        { name: "Tagliata al tonno di sesamo", price: "€ 25,00", desc: "Con verdurine al forno e glassa di aceto balsamico", allergens: "11", img: "https://i.postimg.cc/FHMYXsHw/Tagliata-al-tonno-di-sesamo-con-verdure-al-forno.jpg" },
+                        { name: "Baccalà alla mediterranea", price: "€ 22,00", desc: "Ai due pomodori (fresco e giallo), olive nere e capperi", allergens: "11", img: "https://i.postimg.cc/NfsV3hJQ/PHOTO-2026-07-10-14-08-42.jpg" },
+                        { name: "Filetto d’orata in crosta di patate e misticanza d’insalata", price: "€ 20,00", desc: "", allergens: "8, 10, 11", img: "https://i.postimg.cc/gctkPkSp/Filetto-d-orata-in-crosta-di-patate-e-misticanza-d-insalata.jpg" },
+                        { name: "Salmone e mango", price: "€ 22,00", desc: "Con crema di mango", allergens: "11", img: "https://i.postimg.cc/rwBD2Fpd/salmone-e-mango.jpg" },
+                        { name: "Pescato del giorno alla ligure", price: "all'etto € 7,00", desc: "Alla brace, al sale o alla ligure", allergens: "", img: "https://i.postimg.cc/HxXKgvZ3/pescato.jpg" }
+                    ]},
+                    { id: "cat-contorni", name: "Contorni", type: "cards", items: [
+                        { name: "Verdure grigliate", price: "€ 6,00", desc: "", allergens: "", img: "https://i.postimg.cc/MG1v62cy/verdure.jpg" },
+                        { name: "Insalata mista", price: "€ 6,00", desc: "", allergens: "", img: "https://i.postimg.cc/1tP44C6H/insalata-mista.jpg" },
+                        { name: "Patate al forno", price: "€ 6,00", desc: "", allergens: "", img: "https://i.postimg.cc/QNQwp67Y/patate-forno.jpg" },
+                        { name: "Pomodorini all'insalata", price: "€ 6,00", desc: "", allergens: "", img: "https://i.postimg.cc/C5hZrPx1/pomodorii.jpg" }
+                    ]},
+                    { id: "cat-dolci", name: "I Dolci", type: "cards", items: [
+                        { name: "Torta Caprese con gelato al fior di latte", price: "€ 7,00", desc: "", allergens: "1, 8, 10, 14", img: "https://i.postimg.cc/2y15rXXb/caprese.jpg" },
+                        { name: "Delizia al limone", price: "€ 7,00", desc: "", allergens: "8, 10, 14", img: "https://i.postimg.cc/pr3H5r4v/Delizia-al-limone.jpg" },
+                        { name: "Pastiera napoletana", price: "€ 7,00", desc: "Artigianale", allergens: "8, 10, 14", img: "https://i.postimg.cc/J0zn5spN/pastiera.jpg" },
+                        { name: "Babà classico al rum", price: "€ 7,00", desc: "Con panna o nutella", allergens: "8, 10, 14", img: "https://i.postimg.cc/L6vWWnN5/baba.jpg" },
+                        { name: "Tiramisù", price: "€ 7,00", desc: "Con scaglie di cioccolato", allergens: "8, 10, 14", img: "https://i.postimg.cc/3w0bW974/tiramisu.jpg" },
+                        { name: "Sfogliatelle napoletane", price: "€ 7,00", desc: "", allergens: "10, 14", img: "https://i.postimg.cc/zBm2hWXx/sfogliatelle.jpg" }
+                    ]},
+                    { id: "cat-bar", name: "Bar & Cocktails", type: "list", items: [
+                        { name: "Limoncello Spritz", price: "€ 14,00" },
+                        { name: "Hugo Spritz", price: "€ 13,00" },
+                        { name: "Aperol Spritz", price: "€ 11,00" },
+                        { name: "Birra artigianale 33 cl", price: "€ 7,50" },
+                        { name: "Bibite lattina", price: "€ 4,00" },
+                        { name: "Caffè espresso", price: "€ 1,80" }
+                    ]}
+                ]
+            },
+            en: {
+                footer: "<p>Cover charge: € 3,00 | *Originally frozen product</p><p>Allergens from (1) to (14): check informative chart</p>",
+                sections: [
+                    { id: "cat-mare-ant", name: "Seafood Starters", type: "cards", items: [
+                        { name: "Mussels marinara style", price: "€ 15.00", desc: "", allergens: "5", img: "https://i.postimg.cc/76RwQH4d/PHOTO-2026-07-10-13-41-05-3.jpg" },
+                        { name: "Octopus salad", price: "€ 18.00", desc: "With potato cream, fresh cherry tomatoes, green olives, and PGI balsamic vinegar reduction", allergens: "5", img: "https://i.postimg.cc/Gt0hmLfK/PHOTO-2026-07-10-13-41-32.jpg" },
+                        { name: "Warm seafood salad", price: "€ 20.00", desc: "Squid, prawns, cuttlefish with fennel and oranges", allergens: "2, 5, 9", img: "https://i.postimg.cc/BnvssPvp/PHOTO-2026-07-10-13-42-17.jpg" },
+                        { name: "\"LEVANTE\" King Prawns with orange", price: "€ 16.50", desc: "With orange sauce and chopped almonds", allergens: "1, 9", img: "https://i.postimg.cc/sXYb53Xc/PHOTO-2026-07-10-13-44-41.jpg" },
+                        { name: "Tuna tartare & Apulian burrata", price: "€ 22.00", desc: "", allergens: "11, 14", img: "https://i.postimg.cc/3NN8DPRT/Tartare-di-tonno-e-burrata-pugliese.jpg" },
+                        { name: "Local \"LEVANTE\" Soup", price: "€ 18.00", desc: "With Neapolitan tarallo biscuit", allergens: "1, 5, 8, 9", img: "https://i.postimg.cc/pLqss4V6/zuppetta-levante.jpg" },
+                        { name: "Raw Seafood Selection \"LEVANTE\"", price: "€ 48.00", desc: "", allergens: "5, 9, 11", img: "https://i.postimg.cc/0jYfDHHj/crudo-levante.jpg" },
+                        { name: "Salmon tartare & avocado", price: "€ 20.00", desc: "", allergens: "11", img: "https://i.postimg.cc/fy1RLjGw/taratare-avocado.jpg" }
+                    ]},
+                    { id: "cat-terra-ant", name: "Land Starters", type: "cards", items: [
+                        { name: "Campanian Buffalo Mozzarella (250g)", price: "€ 24.00", desc: "Served with cherry tomato bruschetta", allergens: "8, 14", img: "https://i.postimg.cc/P5sqnyb4/mozzarella-di-bufala-campana.jpg" },
+                        { name: "Mozzarella Caprese salad (250g)", price: "€ 20.00", desc: "", allergens: "14", img: "https://i.postimg.cc/GmK9PYYh/caprese-mozzarella.jpg" },
+                        { name: "Apulian burrata with rocket and cherry tomatoes", price: "€ 15.00", desc: "Served with rocket (arugula) and cherry tomatoes", allergens: "14", img: "https://i.postimg.cc/J016CJqV/PHOTO-2026-07-10-14-10-36.jpg" },
+                        { name: "Bruschetta with cherry tomatoes", price: "€ 6.00", desc: "With cherry tomatoes, fresh basil, and oregano", allergens: "8", img: "https://i.postimg.cc/Jz9p4Sqh/PHOTO-2026-07-10-14-11-35.jpg" },
+                        { name: "Bruschetta with burrata and zucchini", price: "€ 7.00", desc: "With Apulian burrata and raw zucchini strips", allergens: "8, 14", img: "https://i.postimg.cc/T2Jgjm3W/burrata-e-zucchine.jpg" },
+                        { name: "Bruschetta with burrata and anchovies", price: "€ 8.00", desc: "With Apulian burrata and anchovies", allergens: "8, 14", img: "https://i.postimg.cc/zvFQ8B5N/burrata-e-acciugh.jpg" },
+                        { name: "Eggplant Parmigiana", price: "€ 14.00", desc: "", allergens: "14", img: "https://i.postimg.cc/v83X64zC/PHOTO-2026-07-10-14-12-12.jpg" }
+                    ]},
+                    { id: "cat-primi-terra", name: "Land Pasta", type: "cards", items: [
+                        { name: "Ligurian Trofie with pesto", price: "€ 16.00", desc: "With Genovese basil pesto PDO", allergens: "8, 14", img: "https://i.postimg.cc/Xvk9SPDX/PHOTO-2026-07-10-14-15-07.jpg" },
+                        { name: "Spaghetti alla carbonara", price: "€ 19.00", desc: "", allergens: "8, 10", img: "https://i.postimg.cc/fyJddRz6/PHOTO-2026-07-10-14-15-23.jpg" },
+                        { name: "Spaghetti alla Nerano", price: "€ 18.00", desc: "Fried zucchini and cheese", allergens: "8, 14", img: "https://i.postimg.cc/tg6VsncX/spaghetti-nerano.jpg" },
+                        { name: "Fresh gnocchi with cherry tomato, mozzarella and parmesan", price: "€ 16.00", desc: "", allergens: "8, 14", img: "https://i.postimg.cc/nz0VrHnx/Gnocchi-freschi-con-pomodorino-mozzarella-e-grana.jpg" },
+                        { name: "Ravioli alla bolognese", price: "€ 18.00", desc: "", allergens: "8", img: "https://i.postimg.cc/CKhzDxmw/PHOTO-2026-07-10-14-16-46.jpg" },
+                        { name: "Spaghetti with fresh tomato and basil", price: "€ 16.00", desc: "", allergens: "8", img: "https://i.postimg.cc/zBSbjZ5c/Spaghetti-pomodorini-fresco-e-basilico.jpg" },
+                        { name: "Spaghetti with tomato sauce", price: "€ 17.00", desc: "", allergens: "8", img: "https://i.postimg.cc/9MFVvvyq/Spaghetti-con-salsa-di-pomodoro.jpg" },
+                        { name: "Penne all'arrabbiata", price: "€ 16.00", desc: "Spicy tomato sauce", allergens: "8", img: "https://i.postimg.cc/G3KTTCXN/Penne-all-arrabiata.jpg" }
+                    ]},
+                    { id: "cat-primi-mare", name: "Seafood Pasta", type: "cards", items: [
+                        { name: "Paccheri with sea bream, yellow tomato & pistachio", price: "€ 19.00", desc: "Yellow datterino cherry tomatoes, and chopped Bronte pistachios PDO", allergens: "1, 8, 11", img: "https://i.postimg.cc/dt1SV283/PHOTO-2026-07-10-13-49-25.jpg" },
+                        { name: "Prawn and burrata risotto", price: "€ 19.00", desc: "", allergens: "5, 9", img: "https://i.postimg.cc/GmkcXnH4/PHOTO-2026-07-10-13-50-36.jpg" },
+                        { name: "Spaghetti with clams and yellow datterino", price: "€ 20.00", desc: "Served with yellow tomatoes", allergens: "5, 8", img: "https://i.postimg.cc/gjXpRfCb/PHOTO-2026-07-10-13-51-15.jpg" },
+                        { name: "Seafood carbonara spaghetti", price: "€ 21.00", desc: "With crispy cured pork cheek", allergens: "5, 8, 10, 11", img: "https://i.postimg.cc/pT7b2spf/PHOTO-2026-07-10-13-58-42.jpg" },
+                        { name: "Spaghetti with mussels, clams and tomatoes", price: "€ 19.00", desc: "", allergens: "5, 8", img: "https://i.postimg.cc/YSCC0yCt/PHOTO-2026-07-10-14-01-19.jpg" },
+                        { name: "Paccheri with lobster", price: "€ 28.00", desc: "With fresh cherry tomatoes", allergens: "8, 9", img: "https://i.postimg.cc/430sdf0d/PHOTO-2026-07-10-14-01-44.jpg" },
+                        { name: "Paccheri swordfish, eggplant & pecorino", price: "€ 21.00", desc: "With yellow cherry tomatoes", allergens: "8, 11, 14", img: "https://i.postimg.cc/WpGcRwsf/PHOTO-2026-07-10-14-04-09.jpg" },
+                        { name: "Mixed pasta with mussels, beans and cherry tomato", price: "€ 18.50", desc: "", allergens: "5, 8", img: "https://i.postimg.cc/MGwzYcT0/Pasta-mista-con-cozze-fagioli-e-pomodorino.jpg" }
+                    ]},
+                    { id: "cat-secondi", name: "Main Courses", type: "cards", items: [
+                        { name: "Chicken breast mille-feuille", price: "€ 17.00", desc: "With grilled vegetables and PGI balsamic vinegar glaze", allergens: "14", img: "https://i.postimg.cc/SNK2Wv5j/millefoglio-pollo.jpg" },
+                        { name: "Beef tagliata with rocket and parmesan", price: "€ 24.00", desc: "", allergens: "14", img: "https://i.postimg.cc/26z8CqRG/Tagliata-di-carne-di-manzo-rucola-e-grana.jpg" },
+                        { name: "Sesame-crusted tuna tagliata", price: "€ 25.00", desc: "With baked vegetables and balsamic vinegar glaze", allergens: "11", img: "https://i.postimg.cc/FHMYXsHw/Tagliata-al-tonno-di-sesamo-con-verdure-al-forno.jpg" },
+                        { name: "Mediterranean-style cod", price: "€ 22.00", desc: "With two types of tomatoes, black olives, and capers", allergens: "11", img: "https://i.postimg.cc/NfsV3hJQ/PHOTO-2026-07-10-14-08-42.jpg" },
+                        { name: "Sea bream fillet in potato crust", price: "€ 20.00", desc: "Served with mixed salad", allergens: "8, 10, 11", img: "https://i.postimg.cc/gctkPkSp/Filetto-d-orata-in-crosta-di-patate-e-misticanza-d-insalata.jpg" },
+                        { name: "Salmon and mango", price: "€ 22.00", desc: "With mango cream", allergens: "11", img: "https://i.postimg.cc/rwBD2Fpd/salmone-e-mango.jpg" },
+                        { name: "Catch of the day (Ligurian style)", price: "per 100g € 7.00", desc: "Grilled, salt-baked or Ligurian style", allergens: "", img: "https://i.postimg.cc/HxXKgvZ3/pescato.jpg" }
+                    ]},
+                    { id: "cat-contorni", name: "Sides", type: "cards", items: [
+                        { name: "Grilled vegetables", price: "€ 6.00", desc: "", allergens: "", img: "https://i.postimg.cc/MG1v62cy/verdure.jpg" },
+                        { name: "Mixed salad", price: "€ 6.00", desc: "", allergens: "", img: "https://i.postimg.cc/1tP44C6H/insalata-mista.jpg" },
+                        { name: "Baked potatoes", price: "€ 6.00", desc: "", allergens: "", img: "https://i.postimg.cc/QNQwp67Y/patate-forno.jpg" },
+                        { name: "Fresh tomato salad", price: "€ 6.00", desc: "", allergens: "", img: "https://i.postimg.cc/C5hZrPx1/pomodorii.jpg" }
+                    ]},
+                    { id: "cat-dolci", name: "Desserts", type: "cards", items: [
+                        { name: "Caprese cake with fior di latte ice cream", price: "€ 7.00", desc: "", allergens: "1, 8, 10, 14", img: "https://i.postimg.cc/2y15rXXb/caprese.jpg" },
+                        { name: "Lemon Delight", price: "€ 7.00", desc: "", allergens: "8, 10, 14", img: "https://i.postimg.cc/pr3H5r4v/Delizia-al-limone.jpg" },
+                        { name: "Artisanal Neapolitan pastiera", price: "€ 7.00", desc: "", allergens: "8, 10, 14", img: "https://i.postimg.cc/J0zn5spN/pastiera.jpg" },
+                        { name: "Classic baba with rum", price: "€ 7.00", desc: "Served with cream or Nutella", allergens: "8, 10, 14", img: "https://i.postimg.cc/L6vWWnN5/baba.jpg" },
+                        { name: "Tiramisù", price: "€ 7.00", desc: "With chocolate shavings", allergens: "8, 10, 14", img: "https://i.postimg.cc/3w0bW974/tiramisu.jpg" },
+                        { name: "Neapolitan sfogliatelle", price: "€ 7.00", desc: "", allergens: "10, 14", img: "https://i.postimg.cc/zBm2hWXx/sfogliatelle.jpg" }
+                    ]},
+                    { id: "cat-bar", name: "Bar & Drinks", type: "list", items: [
+                        { name: "Limoncello Spritz", price: "€ 14.00" },
+                        { name: "Hugo Spritz", price: "€ 13.00" },
+                        { name: "Aperol Spritz", price: "€ 11.00" },
+                        { name: "Craft Beer 33 cl", price: "€ 7.50" },
+                        { name: "Soft drinks", price: "€ 4.00" },
+                        { name: "Espresso Coffee", price: "€ 1.80" }
+                    ]}
+                ]
+            }
+        };
+
+        let currentLang = 'it';
+
+        function initMenu(lang) {
+            currentLang = lang;
+            document.getElementById('language-screen').style.display = 'none';
+            document.getElementById('menu-screen').style.display = 'block';
+            
+            const categoriesBox = document.getElementById('categories-box');
+            categoriesBox.innerHTML = '';
+            
+            const sections = database[currentLang].sections;
+            
+            sections.forEach((sec) => {
+                const btn = document.createElement('div');
+                btn.className = 'category-card';
+                btn.id = `btn-${sec.id}`;
+                btn.onclick = () => selectCategory(sec.id);
+                btn.innerHTML = `<h3>${sec.name}</h3>`;
+                categoriesBox.appendChild(btn);
+            });
+
+            document.getElementById('menu-footer').innerHTML = database[currentLang].footer;
+
+            if(sections.length > 0) {
+                selectCategory(sections[0].id);
+            }
+        }
+
+        function selectCategory(categoryId) {
+            document.querySelectorAll('.category-card').forEach(card => {
+                card.classList.remove('active-cat');
+            });
+            
+            const targetBtn = document.getElementById(`btn-${categoryId}`);
+            if(targetBtn) targetBtn.classList.add('active-cat');
+
+            const section = database[currentLang].sections.find(s => s.id === categoryId);
+            if(!section) return;
+
+            document.getElementById('selected-category-name').innerText = section.name;
+
+            const itemsBox = document.getElementById('category-items-box');
+            itemsBox.innerHTML = '';
+
+            if(section.type === 'cards') {
+                section.items.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'menu-item';
+                    
+                    let imageHtml = item.img ? `<img class="item-img" src="${item.img}" alt="${item.name}" loading="lazy" onclick="openPreview(this.src)">` : '';
+                    let descHtml = item.desc ? `<p class="item-desc">${item.desc}</p>` : '';
+                    let allergenHtml = item.allergens ? `<span class="allergen-label">${currentLang === 'it' ? 'Allergeni' : 'Allergens'}: (${item.allergens})</span>` : '';
+
+                    card.innerHTML = `
+                        ${imageHtml}
+                        <div class="item-body">
+                            <div class="item-header">
+                                <h4 class="item-name">${item.name}</h4>
+                                <span class="item-price">${item.price}</span>
+                            </div>
+                            ${descHtml}
+                            ${allergenHtml}
+                        </div>
+                    `;
+                    itemsBox.appendChild(card);
+                });
+            } else if (section.type === 'list') {
+                const listContainer = document.createElement('div');
+                listContainer.className = 'simple-list';
+                
+                section.items.forEach(item => {
+                    const row = document.createElement('div');
+                    row.className = 'simple-row';
+                    row.innerHTML = `
+                        <span class="simple-name">${item.name}</span>
+                        <span class="simple-price">${item.price}</span>
+                    `;
+                    listContainer.appendChild(row);
+                });
+                itemsBox.appendChild(listContainer);
+            }
+        }
+
+        /* LIGHTBOX ANTEPRIMA */
+        function openPreview(imgSrc) {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            
+            lightboxImg.src = imgSrc;
+            lightbox.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePreview() {
+            const lightbox = document.getElementById('lightbox');
+            lightbox.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") {
+                closePreview();
+            }
+        });
+
+        function resetToLanguage() {
+            document.getElementById('menu-screen').style.display = 'none';
+            document.getElementById('language-screen').style.display = 'flex';
+        }
+    </script>
+</body>
+</html>
