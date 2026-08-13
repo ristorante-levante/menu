@@ -630,6 +630,12 @@
             }
         }
 
+        // FUNZIONE HELPER PER INCODE DEGLI URL CON SPAZI O CARATTERI SPECIALI
+        function encodeUrlIfNeeded(url) {
+            if (!url) return '';
+            return encodeURI(url);
+        }
+
         function selectCategory(categoryId) {
             document.querySelectorAll('.category-card').forEach(card => {
                 card.classList.remove('active-cat');
@@ -651,7 +657,8 @@
                     const card = document.createElement('div');
                     card.className = 'menu-item';
                     
-                    let imageHtml = item.img ? `<img class="item-img" src="${item.img}" alt="${item.name}" loading="lazy" onclick="openPreview(this.src)">` : '';
+                    const safeImgUrl = encodeUrlIfNeeded(item.img);
+                    let imageHtml = item.img ? `<img class="item-img" src="${safeImgUrl}" alt="${item.name}" loading="lazy" onclick="openPreview('${safeImgUrl}')">` : '';
                     let descHtml = item.desc ? `<p class="item-desc">${item.desc}</p>` : '';
                     let allergenHtml = item.allergens ? `<span class="allergen-label">${currentLang === 'it' ? 'Allergeni' : 'Allergens'}: (${item.allergens})</span>` : '';
 
